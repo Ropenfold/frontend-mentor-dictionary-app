@@ -1,0 +1,67 @@
+.navigationContainer {
+    display: flex;
+    align-items: center;
+}
+
+.logo {
+    width: 30%;
+}
+
+.dropDownMenu {
+    width: 50%;
+    margin-right: 1rem;
+}
+
+.lineBreak {
+    border-left: 1px solid #E9E9E9;
+    height: 32px;
+    margin-right: 1rem;
+}
+
+.toggleSwitch {
+    margin-right: 0.5rem;
+}
+
+.moonLogo {
+    filter: var(--moon-color); /* Use a CSS filter or color variable for moon logo */
+    transition: filter 0.3s ease; /* Smooth transition for theme switch */
+  }
+  
+  .moonLogo svg {
+    stroke: var(--moon-color); /* Light mode stroke color */
+    transition: stroke 0.3s ease;
+  }
+
+  @media (min-width: 768px) {
+    .navigationContainer {
+        width: 100vw;
+    }
+
+    .lineBreak {
+        margin-right: 1rem;
+    }
+
+    .dropDownMenu {
+        width: 18%;
+        margin-right: 0;
+    }
+
+    .logo {
+        width: 65%;
+    }
+  }
+
+  @media (min-width: 992px) {
+    .navigationContainer {
+        width: 50vw;
+    }
+
+    .logo {
+        width: 55%;
+    }
+
+    .dropDownMenu {
+        width: 30%;
+        margin-right: 0.5rem;
+    }
+  }
