@@ -1,95 +1,99 @@
-import Image from "next/image";
+'use client'
+
 import styles from "./page.module.css";
+import SearchBox from "./components/search-box/searchBox";
+import StartState from "./components/start-state/startState";
+import CorrectResponse from "./components/correct-response/correctResponse";
+import { ErrorState } from "./components/error-state/errorState";
+import { useEffect, useState } from "react";
+import Header from "./components/header/header";
+import WordNotFound from "./components/word-not-found/wordNotFound";
+import { useTheme } from "next-themes";
+
+type ApiResponse = {
+  word: string;
+  phonetics: { text?: string; audio?: string }[];
+  meanings: {
+    partOfSpeech: string;
+    definitions: { definition: string; example?: string }[];
+    synonyms: string[];
+  }[];
+  sourceUrls?: string[];
+}[];
+
+type ErrorResponse = {
+  title: string;
+  message: string;
+  resolution: string;
+};
 
 export default function Home() {
+
+  const [word, setWord] = useState('')
+  const [data, setData] = useState<ApiResponse | ErrorResponse | null>(null);
+  const [mounted, setMounted] = useState(false);
+  const { resolvedTheme, setTheme } = useTheme();
+  const [dataResponse, setDataResponse ] = useState<React.ReactNode>(<StartState />);
+
+
+  useEffect(() => {
+    
+    console.log('data firing on change', data);
+    if (data === null) {
+      setDataResponse(<StartState />)
+    } else if(Array.isArray(data)){
+      setDataResponse(<CorrectResponse {...data[0]}/>)
+    } else if(data && 'title' in data && data.title === "Network Error"){
+      setDataResponse(<ErrorState {...data}/>)
+    } else if (data && 'title' in data){
+      setDataResponse(<WordNotFound />)
+    }
+    
+  }, [data])
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+  if (!mounted) {
+    return null;
+  }
+  
+  const toggleTheme = (): void => {
+    setTheme(resolvedTheme === "light" ? "dark" : "light");
+  };
+
+  const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setWord(event.target.value);
+    console.log(word, 'word');  
+  };
+
+  const searchWord = async (word: string): Promise<void> => {
+    
+
+    const url = `https://api.dictionaryapi.dev/api/v2/entries/en/${word}`
+
+    try {
+      const response = await fetch(url);
+      const data = await response.json();
+      setData(data);
+    } catch ( error) {
+      if (error instanceof Error) { 
+      if (error.message === "Failed to fetch" || !navigator.onLine) {
+        setData({ title: "Network Error", message: "No internet connection", resolution: "Try searching again or contact support."  })
+      } else {
+        setData({ title: "Error", message: "Something went wrong. Please try again later", resolution: "Please refresh the page and try again." })
+      }
+    }
+  }
+  }
+
   return (
     <div className={styles.page}>
       <main className={styles.main}>
-        <Image
-          className={styles.logo}
-          src="/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
-          priority
-        />
-        <ol>
-          <li>
-            Get started by editing <code>app/page.tsx</code>.
-          </li>
-          <li>Save and see your changes instantly.</li>
-        </ol>
-
-        <div className={styles.ctas}>
-          <a
-            className={styles.primary}
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className={styles.logo}
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
-            />
-            Deploy now
-          </a>
-          <a
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-            className={styles.secondary}
-          >
-            Read our docs
-          </a>
-        </div>
-      </main>
-      <footer className={styles.footer}>
-        <a
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/file.svg"
-            alt="File icon"
-            width={16}
-            height={16}
-          />
-          Learn
-        </a>
-        <a
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
-          />
-          Examples
-        </a>
-        <a
-          href="https://nextjs.org?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
-          />
-          Go to nextjs.org →
-        </a>
-      </footer>
+      <Header toggleTheme={toggleTheme} resolvedTheme={resolvedTheme}/>
+        <SearchBox value={word} handleChange={handleChange} searchWord={searchWord}/>
+        {dataResponse}
+        </main>
     </div>
   );
 }
