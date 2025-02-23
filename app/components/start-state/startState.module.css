@@ -1,0 +1,10 @@
+.startStateConatiner {
+    width: 100%;
+    margin-top: 2rem;
+    display: flex;
+    justify-content: center;
+}
+
+.heading {
+    color: var(--lightGrey);
+}
