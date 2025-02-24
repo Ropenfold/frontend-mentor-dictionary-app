@@ -10,7 +10,6 @@ interface HeaderProps {
 }
 
 const Header: React.FC<HeaderProps> = ({ toggleTheme, resolvedTheme }) => {
-  console.log('resolvedTheme', resolvedTheme);
   return (
     <div className={styles.navigationContainer}>
         <div className={styles.logo} >

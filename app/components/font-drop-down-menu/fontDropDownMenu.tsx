@@ -31,8 +31,6 @@ const changeMenuState = (): void => {
     setMenuState(!isOpen);
 }
 
-console.log('isOpen', isOpen);
-
   return (
     <menu>
         <div className={styles.dropDownMenuContainer}>
