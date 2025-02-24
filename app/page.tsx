@@ -38,7 +38,6 @@ export default function Home() {
 
   useEffect(() => {
     
-    console.log('data firing on change', data);
     if (data === null) {
       setDataResponse(<StartState />)
     } else if(Array.isArray(data)){
@@ -64,7 +63,6 @@ export default function Home() {
 
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setWord(event.target.value);
-    console.log(word, 'word');  
   };
 
   const searchWord = async (word: string): Promise<void> => {
