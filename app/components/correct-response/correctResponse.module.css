@@ -52,10 +52,10 @@
   }
 
   .definitionText {
-    color: var(----textColour);
+    color: var(--textColour);
   }
 
-  li::marker {
+  .definitionText::marker {
     color: var(--purple);
   }
 
